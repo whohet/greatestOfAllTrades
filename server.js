@@ -1,11 +1,23 @@
 const express = require("express");
-const app = express();
-const port = 3000;
+const cors = require("cors");
+const mongoose = require("mongoose");
+const { CLIENT_URL } = require("./config/config");
+require("dotenv").config();
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
+const PORT = process.env.PORT || 5555;
+const app=express();
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}!`);
+
+// --------------- Connect to MongoDB ---------------
+const uri = process.env.ATLAS_URI;
+mongoose
+  .connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log("MongoDB database connection established successfully");
+  })
+  .catch((err) => console.error(err));
+
+// --------------- Listen to given PORT ---------------
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
