@@ -248,4 +248,38 @@ router.post("/all", async (req, res) => {
     }
   });
   
+  router.post('/update', async (req, res) => {
+    try {
+      const securityId = req.body.securityId;
+       
+  
+        const result = await Security.findOneAndUpdate(
+          {
+            securityId: securityId,
+          },
+          {
+            $set: {
+              issuer: req.body.issuer,
+              maturityDate: req.body.maturityDate,
+              coupon: req.body.coupon,
+              type: req.body.type,
+              faceValue: req.body.faceValue,
+              status:req.body.status
+            },
+          }
+        );
+        return res.status(200).json({
+          success: true,
+          message: "Security saved successfully",
+          result,
+        });
+      
+    } catch (err) {
+      console.log(err);
+      return res
+        .status(500)
+        .json({ err, success: false, message: "Internal server error" });
+    }
+  });
+
   module.exports = router;

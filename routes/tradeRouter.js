@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const Trade = require("../models/trade.model");
 const Security = require("../models/security.model");
 const crypto = require("crypto");
+const { log } = require("console");
 
 router.get("/:tradeId", async (req, res) => {
     try {
@@ -89,5 +90,37 @@ router.get("/:tradeId", async (req, res) => {
 
   });
  
+  router.post('/update', async (req, res) => {
+    try {
+      const tradeId = req.body.tradeId;
+       
   
+        const result = await Trade.findOneAndUpdate(
+          {
+            tradeId: tradeId,
+          },
+          {
+            $set: {
+              quantity: req.body.quantity,
+              status: req.body.status,
+              price: req.body.price,
+              buysell: req.body.buysell,
+              tradeDate: req.body.tradeDate,
+              settlementDate:req.body.settlementDate
+            },
+          }
+        );
+        return res.status(200).json({
+          success: true,
+          message: "Trade saved successfully",
+          result,
+        });
+      
+    } catch (err) {
+      console.log(err);
+      return res
+        .status(500)
+        .json({ err, success: false, message: "Internal server error" });
+    }
+  });
   module.exports = router;
