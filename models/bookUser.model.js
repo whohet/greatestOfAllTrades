@@ -3,12 +3,12 @@ const mongoose = require("mongoose");
 
 const bookUserSchema = new mongoose.Schema({
     bookId: { 
-        type: Number,
+        type: String,
         unique: true,
         required:true 
     },
     userId: { 
-        type: Number,
+        type: String,
         unique: true,
         required:true 
     },

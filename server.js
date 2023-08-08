@@ -72,6 +72,10 @@ passport.deserializeUser((sessionUser, done) => {
 //----------------- Routes -----------------
 const userRouter = require("./routes/userRouter");
 app.use("/users", userRouter);
+const tradeRouter = require("./routes/tradeRouter");
+app.use("/trades", tradeRouter);
+const securityRouter = require("./routes/securityRouter");
+app.use("/securities", securityRouter);
 
 // --------------- Connect to MongoDB ---------------
 const uri = process.env.ATLAS_URI;
