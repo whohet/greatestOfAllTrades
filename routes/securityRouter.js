@@ -8,7 +8,7 @@ const User = require("../models/user.model");
 const Book = require("../models/book.model")
 const { log } = require("console");
 
-router.get("/all", async (req, res) => {
+router.post("/all", async (req, res) => {
     try {
         const user=await User.findOne({
             username:req.body.username
@@ -60,7 +60,7 @@ router.get("/all", async (req, res) => {
     }
   });
 
-  router.get("/trades", async (req, res) => {
+  router.post("/trades", async (req, res) => {
     try {
       const trades=await Trade.find({
         securityId:req.body.securityId
@@ -110,6 +110,142 @@ router.get("/all", async (req, res) => {
         });
       }
 
+  });
+
+  router.post("/securityId", async (req, res) => {
+    
+    try {
+      const user=await User.findOne({
+          username:req.body.username
+      })
+      //username ->books->trades->security
+      const book=await Book.find({
+          userId:user.userId
+      })
+      console.log("book")
+      console.log(book)
+      let trades=[]
+      for(var i=0;i<book.length;i++)
+      {
+          trades.push(await Trade.find({
+              bookId:book[i].bookId
+          }));
+          
+      }
+     
+
+      console.log("trade")
+      console.log(trades)
+      let securities = [];
+      for(var i=0;i<trades.length;i++)
+      {
+          for(var j=0;j<trades[i].length;j++)
+          {
+              const security = await Security.findOne(
+              {
+                  securityId:trades[i][j].securityId
+              })
+              if(security==null)
+                  continue;
+              if(security.securityId==req.body.securityId)
+              {
+                return res.status(200).json({
+                  success: true,
+                  security,
+                });
+              }
+          }
+      }
+      
+    return res.status(400).json({
+      success: true,
+      message: "No such ID is not associated with this user. Please try again.",
+    });
+  } catch (err) {
+      console.log(err)
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error. Please try again.",
+  
+    });
+  }
+
+  });
+
+  router.post("/range", async (req, res) => {
+    try {
+      const user=await User.findOne({
+          username:req.body.username
+      })
+      //username ->books->trades->security
+      const book=await Book.find({
+          userId:user.userId
+      })
+      console.log("book")
+      console.log(book)
+      let trades=[]
+      for(var i=0;i<book.length;i++)
+      {
+          trades.push(await Trade.find({
+              bookId:book[i].bookId
+          }));
+          
+      }
+     
+
+      console.log("trade")
+      console.log(trades)
+      let securities = [];
+      for(var i=0;i<trades.length;i++)
+      {
+          for(var j=0;j<trades[i].length;j++)
+          {
+              const security = await Security.findOne(
+              {
+                  securityId:trades[i][j].securityId
+              })
+              if(security==null)
+                  continue;
+              var maturityDate=new Date(security.maturityDate);
+              var date1=new Date(req.body.date1);
+              var date2=new Date(req.body.date2);
+              if(maturityDate>=date1 && maturityDate<=date2)
+                securities.push(security);
+
+          }
+      }
+      
+    return res.status(200).json({
+      success: true,
+      securities,
+    });
+  } catch (err) {
+      console.log(err)
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error. Please try again.",
+  
+    });
+  }
+  });
+
+  router.delete("/delete", async (req, res) => {
+    try {
+      await Security.deleteOne({
+        securityId:req.body.securityId
+      })
+      return res.status(200).json({
+        success: true,
+        message: "Deleted",
+      });
+    } catch (err) {
+        console.log(err);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error. Please try again.",
+        
+      });
+    }
   });
   
   module.exports = router;

@@ -27,7 +27,7 @@ router.get("/:tradeId", async (req, res) => {
     }
   });
 
-  router.get("/security/:tradeId", async (req, res) => {
+  router.post("/security/:tradeId", async (req, res) => {
     try {
       const tradeId = req.params.tradeId;
       console.log(tradeId);
@@ -88,5 +88,6 @@ router.get("/:tradeId", async (req, res) => {
       }
 
   });
+ 
   
   module.exports = router;
