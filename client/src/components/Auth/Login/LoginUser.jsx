@@ -49,7 +49,13 @@ export default function LoginUser() {
       const userData = { username: signInEmail, password: signInPassword };
       const res = await loginAPI(userData);
       if (res && res.success) {
-        navigate("/dashboard");
+        if(res.user.role==="user") {
+          console.log("user dashboard component");
+        }
+        else {
+          console.log("admin dashboard component");
+          navigate("/adminDashboard");
+        }
       }
     } catch (err) {
       if (err && err.response && err.response.data) {
@@ -58,7 +64,6 @@ export default function LoginUser() {
         toast.error("Internal server error. Please try again.");
       }
     }
-
   };
 
   return (
